@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Schlappi - Impressie Designer</title>
+    <link rel="stylesheet" href="css/indexSchlappi.css">
+</head>
+<body>
+    
+    <div class='wrapper'>
+        <div class="home-image" id="homeImage">
+            <img src="img/home.jpg" alt="<#description#>"/>
+        </div>
+        <div class="home-form" id="homeForm">
+            <div id="uploadContainer">
+                <img src="img/logo-schlappi.svg" border="0">
+                <p><strong>Welkom bij de 3D Markiezen Configurator van Schlappi Markiezen!</strong>
+                    <br/>
+                    Met onze innovatieve applicatie kunnen jij en jouw klanten eenvoudig en snel markiezen in 3D visualiseren op elke gevel. Upload een foto van de gevel, kies uit ons uitgebreide assortiment markiezen, en bekijk direct hoe ze er in het echt uitzien op de foto. Perfect om jouw klant een overtuigend beeld te geven van het eindresultaat!
+                    <br/><br/>
+                    <strong>Zo werkt het:</strong>
+                    <br/><br/>
+                    1) Kies een gevel afbeelding via <strong>"Bestand kiezen"</strong> en druk op <strong>"Upload en Start"</strong>.
+                    <br/>2) Plaats markiezen in 3D en pas ze aan naar wens.
+                    <br/>3) Exporteer de afbeelding om te delen met jouw klant.
+                    <br/><br/>Begin nu met het creëren van jouw unieke markiezenvisualisatie!</p>
+                
+                <div class="upload-wrapper">
+                <input type="file" id="imageUpload" accept="image/*">
+                <button id="uploadButton">Upload en Start</button>
+                </div>
+            </div>
+
+        </div>
+    <div id="info" style="display:none;">
+    </div>
+    <div id="zoomControls" style="position: fixed; top: 10px; right: 10px; background: white; padding: 10px; display:none;">
+        <button id="zoomIn">Inzoomen</button>
+        <button id="zoomOut">Uitzoomen</button>
+        <input type="text" id="zoomPercent" placeholder="100%" style="width: 60px;">
+        <button id="zoomReset">OK</button>
+    </div>
+    <div id="canvasContainer" style="display: none;">
+        <!-- Three.js canvas zal hier worden toegevoegd door de init functie -->
+    </div>
+
+    <div id="topBanner">
+        <div class="banner-logo">
+            <img src="img/logo-schlappi.svg" alt="Schlappi Logo">
+        </div>
+    </div>
+
+    <div id="buttonContainer">
+        <button id="increaseSizeButton" class="icon-button">
+            <img src="img/increase_size.png" alt="Increase Size">
+            <span>Vergroot markies</span>
+        </button>
+        <button id="decreaseSizeButton" class="icon-button">
+            <img src="img/decrease_size.png" alt="Decrease Size">
+            <span>Verklein markies</span>
+        </button>
+        <button id="increaseHorizontalSizeButton" class="icon-button">
+            <img src="img/increase_horizontal.png" alt="Increase Horizontal Size">
+            <span>Vergroot breedte</span>
+        </button>
+        <button id="decreaseHorizontalSizeButton" class="icon-button">
+            <img src="img/decrease_horizontal.png" alt="Decrease Horizontal Size">
+            <span>Verklein breedte</span>
+        </button>
+        <button id="copyButton" class="icon-button">
+            <img src="img/copy.png" alt="Copy">
+            <span>Kopieer markies</span>
+        </button>
+        <button id="pasteButton" class="icon-button">
+            <img src="img/paste.png" alt="Paste">
+            <span>Plak markies</span>
+        </button>
+    </div>
+
+    <div id="materialContainer">
+        <div id="materialTitle">Doeken</div>
+        <div id="materialButtonsContainer"></div> <!-- This is where buttons will be generated -->
+    </div>
+
+    <div id="bakContainer">
+        <div id="materialTitle">Bak</div>
+        <div id="bakButtonsContainer"></div> <!-- This is where buttons will be generated -->
+    </div>
+
+    <div id="objectContainer">
+        <div id="objectTitle">Beschikbare Markiezen</div>
+        <div id="objectButtonsContainer"></div> <!-- This is where buttons will be generated -->
+    </div>
+    </div>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+            }
+        }
+    </script>
+    
+    <script src="js/app.js" type="module"></script>
+    <script src="js/secondary_functions/buttonFunctions.js" type="module"></script>
+</body>
+</html>
