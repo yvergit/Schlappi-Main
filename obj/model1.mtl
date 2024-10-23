@@ -1,4 +1,4 @@
-# Blender 4.2.1 LTS MTL File: 'model5_2.blend'
+# Blender 4.2.1 LTS MTL File: 'None'
 # www.blender.org
 
 newmtl Bak
@@ -19,7 +19,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 3
-map_Kd doek1.jpg
+map_Kd textures/doeken/doek1.png
 
 newmtl PVC
 Ns 422.209320
@@ -30,3 +30,13 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 3
+
+newmtl chrom
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
