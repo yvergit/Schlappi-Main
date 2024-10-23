@@ -41,7 +41,7 @@ import { changeTexture } from './secondary_functions/changeTexture.js';
 import { createSelectObjectButtons } from './secondary_functions/selectObjectButtons.js';
 
 let scene, camera, renderer, controls;
-let availableObjects  = ["model5", "model1", "model15", "model2", "model23"];
+let availableObjects  = ["model5", "model23", "model15", "model2", "model1"];
 let selectedObject = null;
 export {selectedObject};
 let objModel, imagePlane; // Correct gebruik van globale variabelen
