@@ -1,6 +1,18 @@
-import { selectedObject, copyObject, pasteObject } from "../app.js";
+import { selectedObject, copyObject, pasteObject, changeLightDirection, directions, loadNewImage, exportSceneAsImage } from "../app.js";
 import { scaleHorizontal, scaleObject } from "./scaleObject.js";
-// buttonFunctions
+
+let currentDirectionIndex = 0;
+
+function showSelectObject() {
+    document.getElementById('objectContainer').style.display = 'block';
+}
+
+// Button Functions
+function changeLight() {
+    changeLightDirection(directions[currentDirectionIndex]);
+    currentDirectionIndex = (currentDirectionIndex + 1) % directions.length;
+}
+
 // Function to increase size
 function increaseSize() {
     if (selectedObject) {
@@ -51,7 +63,11 @@ document.getElementById('decreaseSizeButton').addEventListener('mousedown', () =
 document.getElementById('increaseHorizontalSizeButton').addEventListener('mousedown', () => startContinuousExecution(increaseHorizontalSize));
 document.getElementById('decreaseHorizontalSizeButton').addEventListener('mousedown', () => startContinuousExecution(decreaseHorizontalSize));
 
-// copy and paste functions from app.js
+// Copy and paste functions from app.js
+document.getElementById('selectButton').addEventListener('click', showSelectObject);
+document.getElementById('uploadImageButton').addEventListener('click', loadNewImage);
+document.getElementById('makeScreenshot').addEventListener('click', exportSceneAsImage);
+document.getElementById('changeLightDirection').addEventListener('click', changeLight);
 document.getElementById('copyButton').addEventListener('click', copyObject);
 document.getElementById('pasteButton').addEventListener('click', pasteObject);
 
