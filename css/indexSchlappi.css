@@ -301,30 +301,6 @@ body {
     padding: 16px 8px;
 }
 
-#topBanner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    display: none;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-}
-
-.banner-content h1 {
-    margin: 0;
-    font-size: 24px;
-    color: #333333;
-}
-
-.banner-logo img {
-    height: 40px;
-}
-
 /* Responsive styles */
 @media (max-width: 600px) {
     #topBanner {
@@ -349,6 +325,78 @@ body {
     background-color: #f0f0f0;
     border-radius: 0 10px 10px 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#topBanner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.banner-content h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333333;
+}
+
+.banner-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.banner-button {
+    padding: 8px 16px;
+    background-color: #f3f3f3;
+    color: rgb(0, 0, 0);
+    border: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;  /* Center the text horizontally */
+    font-weight: bold;   /* Make the text bold */
+}
+
+.banner-button img {
+    width: auto; /* Image width */
+    height: 24px;  /* Image height */
+    margin-right: 10px;  /* Space between image and text */
+}
+
+.banner-button:hover {
+    background-color: #0056b3;
+}
+
+.banner-logo {
+    display: flex;
+    align-items: center;
+}
+
+.banner-logo img {
+    height: 40px;
+}
+
+@media (max-width: 600px) {
+    #topBanner {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .banner-buttons {
+        margin-top: 10px;
+    }
+
+    .banner-logo {
+        margin-top: 10px;
+    }
 }
 
 .icon-button {
@@ -376,3 +424,115 @@ body {
 .icon-button span {
     font-size: 14px;
 }
+
+/* Code wrapper styles */
+.code-wrapper {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Add consistent vertical spacing between all child elements */
+  }
+  
+  .code-wrapper input[type="email"],
+  .code-wrapper input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .code-wrapper button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  /* Style for "Request verification code" button */
+  #requestCodeButton {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+  
+  #requestCodeButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Style for "Verify code" button */
+  #verifyCodeButton {
+    background-color: #28a745;
+    color: #ffffff;
+  }
+  
+  #verifyCodeButton:hover {
+    background-color: #218838;
+  }
+  
+  .code-wrapper button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  #codeStatus,
+  #spamCheckMessage,
+  #timerMessage {
+    font-size: 0.9rem;
+  }
+  
+  #codeStatus {
+    color: #dc3545;
+  }
+  
+  #spamCheckMessage {
+    color: #0056b3;
+  }
+  
+  #timerMessage {
+    color: #28a745;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 600px) {
+    .code-wrapper {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+  }
+  
+  /* Animation for focus states */
+  .code-wrapper input:focus,
+  .code-wrapper button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  /* Transition for showing/hiding elements */
+  #verificationCodeInput,
+  #verifyCodeButton,
+  #codeStatus,
+  #spamCheckMessage,
+  #timerMessage {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+  }
+  
+  #verificationCodeInput:not([style*="display: none"]),
+  #verifyCodeButton:not([style*="display: none"]),
+  #codeStatus:not([style*="display: none"]),
+  #spamCheckMessage:not([style*="display: none"]),
+  #timerMessage:not([style*="display: none"]) {
+    opacity: 1;
+    max-height: 50px;
+  }

@@ -1,31 +1,45 @@
 // Event listener voor de "Upload en Start"-knop
-document.getElementById('uploadButton').addEventListener('click', function() {
-    const imageUpload = document.getElementById('imageUpload');
-    if (imageUpload.files.length === 0) {
-        alert('Selecteer a.u.b. een afbeelding.');
-        return;
-    }
-    
-    const fileReader = new FileReader();
-    fileReader.onload = function(event) {
-        // Verberg de upload interface en toon de legenda
-        document.getElementById('uploadContainer').style.display = 'none'; 
-        document.getElementById('homeImage').style.display = 'none'; 
-        document.getElementById('homeForm').style.display = 'none'; 
-        document.getElementById('uploadContainer').style.display = 'none'; 
-        document.getElementById('info').style.display = 'block';
-        document.getElementById('zoomControls').style.display = 'block';
-        document.getElementById('objectContainer').style.display = 'block';
-        document.getElementById('materialContainer').style.display = 'block';
-        document.getElementById('bakContainer').style.display = 'block';
-        document.getElementById('topBanner').style.display = 'block';
-        document.getElementById('buttonContainer').style.display = 'block';
+export function init_upload() {
+    // Show the file upload section
+    const uploadWrapper = document.getElementById('uploadWrapper');
+    uploadWrapper.style.display = 'block';
 
-        // Start de Three.js scene met de afbeelding als argument
-        init(event.target.result);
-    };
-    fileReader.readAsDataURL(imageUpload.files[0]);
-});
+    // Add the file upload input and button dynamically
+    uploadWrapper.innerHTML = `
+        <input type="file" id="imageUpload" accept="image/*">
+        <button id="uploadButton">Upload en Start</button>
+    `;
+
+    document.getElementById('uploadButton').addEventListener('click', function() {
+        const imageUpload = document.getElementById('imageUpload');
+        if (imageUpload.files.length === 0) {
+            alert('Selecteer a.u.b. een afbeelding.');
+            return;
+        }
+        
+        const fileReader = new FileReader();
+        fileReader.onload = function(event) {
+            // Hide the upload interface and show relevant sections
+            document.getElementById('uploadContainer').style.display = 'none'; 
+            document.getElementById('homeImage').style.display = 'none'; 
+            document.getElementById('homeForm').style.display = 'none'; 
+            document.getElementById('info').style.display = 'block';
+            document.getElementById('zoomControls').style.display = 'block';
+            document.getElementById('objectContainer').style.display = 'block';
+            document.getElementById('materialContainer').style.display = 'block';
+            document.getElementById('bakContainer').style.display = 'block';
+            document.getElementById('topBanner').style.display = 'flex';
+            document.getElementById('buttonContainer').style.display = 'block';
+
+            // Start the Three.js scene with the image as argument
+            init(event.target.result);
+        };
+        fileReader.readAsDataURL(imageUpload.files[0]); // Read the file as a data URL
+    });
+}
+
+//uncomment om upload button zonder verify code te krijgen
+//init_upload();
 
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
@@ -41,7 +55,7 @@ import { changeTexture } from './secondary_functions/changeTexture.js';
 import { createSelectObjectButtons } from './secondary_functions/selectObjectButtons.js';
 
 let scene, camera, renderer, controls;
-let availableObjects  = ["model5", "model23", "model15", "model2", "model1"];
+let availableObjects  = ["model1", "model2", "model5", "model23", "model15"];
 let selectedObject = null;
 export {selectedObject};
 let objModel, imagePlane; // Correct gebruik van globale variabelen
@@ -70,6 +84,7 @@ let previousMousePosition = {
 };
 let currentDirectionIndex = 0; // Begin met de eerste richting
 const directions = ['Zuid', 'West', 'Noord', 'Oost']; // De mogelijke richtingen
+export {directions};
 // Beginwaarde voor de zoomfactor
 let zoomFactor = 100; // 100% betekent geen zoom
 
@@ -230,6 +245,103 @@ scene.add(camera);
     addLighting();
     
     // Maak een nieuw Image element voor de geüploade afbeelding
+    loadImage(textureSrc)
+    
+
+    document.getElementById('canvasContainer').style.display = 'block';
+    document.getElementById('canvasContainer').appendChild(renderer.domElement);
+    window.addEventListener('resize', onWindowResize, false);
+    document.addEventListener('keydown', onDocumentKeyDown, false);
+
+    animate();
+}
+
+// Function to load an object by name
+export function loadSelectedObject(object_name) {
+    const objExt = ".obj";
+    const mtlExt = ".mtl";
+    const basePath = "obj/";
+
+    const mtlLoader = new MTLLoader();
+    const objLoader = new OBJLoader();
+
+    // Remove previous objects from the scene
+    if (switchableObjects.length > 0) {
+        switchableObjects.forEach(obj => {
+            scene.remove(obj); 
+        });
+        switchableObjects.length = 0; 
+        removeBoundingBox();
+    }
+
+    // MTL Loader
+    mtlLoader.load(basePath + object_name + mtlExt, (materials) => {
+        // OBJ model loading
+        objLoader.setMaterials(materials);
+        objLoader.load(basePath + object_name + objExt, function(object) {
+            object.scale.setScalar(1);
+            objModel = object;
+
+            object.traverse(function(child) {
+                if (child.isMesh && child.material) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+
+                    // For 'Doek' material
+                    if (child.material.name === "Doek") {
+                        // Use MeshStandardMaterial for a more realistic appearance
+                        let stofTexture = new THREE.TextureLoader().load('obj/textures/doeken/doek1.png');
+                        child.material = new THREE.MeshStandardMaterial({
+                            name: "Doek",
+                            map: stofTexture, // Texture for a fabric-like appearance
+                            roughness: 0.9,
+                            metalness: 0.1,
+                        });
+                    }
+
+                    // For 'Bak' material
+                    else if (child.material.name === "Bak") {
+                        // Use MeshStandardMaterial for a more realistic appearance
+                        let stofTexture = new THREE.TextureLoader().load('obj/textures/bak/bak1.png');
+                        child.material = new THREE.MeshStandardMaterial({
+                            name: "Bak",
+                            map: stofTexture, // Texture for a fabric-like appearance
+                            roughness: 0.9,
+                            metalness: 0.1,
+                        });
+                    }
+
+                    // For 'PVC' material
+                    if (child.material.name === "PVC") {
+                        let ijzerTexture = new THREE.TextureLoader().load('obj/metallic-textured-background.jpg');
+                        child.material = new THREE.MeshStandardMaterial({
+                            name: "PVC",
+                            map: ijzerTexture, // Texture for a metal-like appearance
+                            roughness: 0.9,
+                            metalness: 0.1,
+                        });
+                    }
+                    child.material.needsUpdate = true;
+                }
+            });
+
+            // Set textures
+            changeTexture(objModel, "Bak", "obj/textures/bak/bak1.png");
+            changeTexture(objModel, "Doek", "obj/textures/doeken/doek2.png");
+
+            // Add the new object to the scene
+            scene.add(objModel);
+            objModel.receiveShadow = true;
+            objModel.position.x = 0;
+
+            // Store the new object in switchableObjects
+            switchableObjects.push(objModel);
+        });
+    });
+}
+
+//function to load the selected image
+export function loadImage(textureSrc){
     const image = new Image();
     image.src = textureSrc; // Stel de data-URL in als de bron van de afbeelding
     image.onload = function() {
@@ -262,85 +374,33 @@ scene.add(camera);
 
         //switchableObjects.push(imagePlane);
     };
-
-    document.getElementById('canvasContainer').style.display = 'block';
-    document.getElementById('canvasContainer').appendChild(renderer.domElement);
-    window.addEventListener('resize', onWindowResize, false);
-    document.addEventListener('keydown', onDocumentKeyDown, false);
-
-    animate();
 }
 
-// Function to load a object by name.
-export function loadSelectedObject(object_name){
-    const objExt = ".obj";
-    const mtlExt = ".mtl";
-    const basePath = "obj/"
+// input to load new image
+export function loadNewImage() {
+    // Create a file input dynamically
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
 
-    const mtlLoader = new MTLLoader();
-    const objLoader = new OBJLoader();
-    // MTL Loader
-    mtlLoader.load(basePath + object_name + mtlExt, (materials) => {
-    
-        // OBJ model laden
-        //eigen changeTexture gebruikt, deze houdt de weerspiegeling weg.
-        objLoader.setMaterials(materials)
-        objLoader.load(basePath + object_name + objExt, function(object) {
-            object.scale.setScalar(1);
-            objModel = object;
-            
-            object.traverse(function(child) {
-                if (child.isMesh && child.material) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                    
-                    //Voor 'Doek' materiaal
-                    if (child.material.name === "Doek") {
-                        // Gebruik MeshStandardMaterial voor een realistischer uiterlijk
-                        let stofTexture = new THREE.TextureLoader().load('obj/textures/doeken/doek1.png');
-                        child.material = new THREE.MeshStandardMaterial({
-                            name: "Doek",
-                            map: stofTexture, // Textuur voor het 'stof'-achtige uiterlijk
-                            roughness: 0.9, // Stof is meestal niet glanzend, dus een hoge roughness waarde
-                            metalness: 0.1, // Stof heeft minimale tot geen metallic eigenschappen
-                        });
-                    }
+    // When a file is selected
+    input.onchange = function(event) {
+        const file = event.target.files[0];
+        if (!file) return; // If no file selected, exit
 
-                    // Voor 'Bak' materiaal
-                    else if (child.material.name === "Bak") {
-                        // Gebruik MeshStandardMaterial voor een realistischer uiterlijk
-                        let stofTexture = new THREE.TextureLoader().load('obj/textures/bak/bak1.png');
-                        child.material = new THREE.MeshStandardMaterial({
-                            name: "Bak",
-                            map: stofTexture, // Textuur voor het 'stof'-achtige uiterlijk
-                            roughness: 0.9, // Stof is meestal niet glanzend, dus een hoge roughness waarde
-                            metalness: 0.1, // Stof heeft minimale tot geen metallic eigenschappen
-                        });
-                    }
+        const fileReader = new FileReader();
+        
+        // On file load
+        fileReader.onload = function(e) {
+            loadImage(e.target.result)
+        };
 
-                    // Voor 'Frame' materiaal
-                    if (child.material.name === "PVC") {
-                        let ijzerTexture = new THREE.TextureLoader().load('obj/metallic-textured-background.jpg');
-                        child.material = new THREE.MeshStandardMaterial({
-                            name: "PVC",
-                            map: ijzerTexture, // Textuur voor het 'ijzer'-achtige uiterlijk
-                            roughness: 0.9, // IJzer heeft een lagere roughness, wat zorgt voor wat glans
-                            metalness: 0.1, // IJzer is een metaal, dus metalness is hoog
-                        });
-                    }     
-                    // Vergeet niet needsUpdate te zetten indien nodig
-                    child.material.needsUpdate = true;
-                }
-            });
-            changeTexture(objModel, "Bak", "obj/textures/bak/bak1.png");
-            changeTexture(objModel, "Doek", "obj/textures/doeken/doek2.png");
-            scene.add(objModel);
-            objModel.receiveShadow = true;
-            objModel.position.x = 0;
-            switchableObjects.push(objModel);           
-        });
-    });
+        fileReader.readAsDataURL(file); // Read the selected file as a Data URL
+    };
+
+    input.click(); // Trigger the file input dialog
 }
+
 
 function addLighting() {
     // Ambient Light toevoegen
@@ -408,7 +468,7 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function exportSceneAsImage() {
+export function exportSceneAsImage() {
     // Renderer uitlezen naar een Data URL
     var imgData, imgNode;
     try {
@@ -480,7 +540,7 @@ function removeBoundingBox() {
     }
 }
 
-function changeLightDirection(direction) {
+export function changeLightDirection(direction) {
     let targetPosition = new THREE.Vector3(0, 0, 0); // Stel dit in op de positie van je focuspunt in de scene
     
     switch(direction) {
@@ -501,8 +561,6 @@ function changeLightDirection(direction) {
     directionalLight.target.position.copy(targetPosition); // Richt het licht
     directionalLight.target.updateMatrixWorld();
 }
-
-
 
 function updateZoomPercent() {
     document.getElementById('zoomPercent').value = `${zoomFactor}%`;
