@@ -1,3 +1,35 @@
+import * as THREE from 'three';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+
+//import { PCDLoader } from 'three/addons/loaders/PCDLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+//import of secondary functions
+import { createMaterialButtons } from './secondary_functions/materialAndBakButtons.js';
+import { changeTexture } from './secondary_functions/changeTexture.js';
+import { createSelectObjectButtons } from './secondary_functions/selectObjectButtons.js';
+
+let scene, camera, renderer, controls;
+let availableObjects  = ["model1", "model2", "model5", "model23", "model15"];
+let selectedObject = null;
+export {selectedObject};
+let objModel, imagePlane; // Correct gebruik van globale variabelen
+let boxHelper;
+let clipboardObject = null; // Voor het tijdelijk opslaan van het gekopieerde object
+let switchableObjects = []; // Lijst van objecten waartussen geschakeld kan worden
+let directionalLight; // Definieer directionalLight aan het begin van je script
+let lightIndex = 0;
+let lights = [];
+let doekTeller = 1;
+export {doekTeller};
+let kleurArray = [0xffffff, 0x80003a, 0x506432, 0xffc500, 0xb30019, 0xec410b];
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+let isDragging = false;
+const directions = ["Voor", "Links", "Rechts"]; // De mogelijke richtingen
+export {directions};
+
 // Event listener voor de "Upload en Start"-knop
 export function init_upload() {
     // Show the file upload section
@@ -25,7 +57,7 @@ export function init_upload() {
             document.getElementById('homeForm').style.display = 'none'; 
             document.getElementById('info').style.display = 'block';
             document.getElementById('zoomControls').style.display = 'block';
-            document.getElementById('objectContainer').style.display = 'block';
+            document.getElementById('objectContainer').style.display = 'flex';
             document.getElementById('materialContainer').style.display = 'block';
             document.getElementById('bakContainer').style.display = 'block';
             document.getElementById('topBanner').style.display = 'flex';
@@ -41,72 +73,14 @@ export function init_upload() {
 //uncomment om upload button zonder verify code te krijgen
 //init_upload();
 
-import * as THREE from 'three';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-
-//import { PCDLoader } from 'three/addons/loaders/PCDLoader.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { DragControls } from 'three/addons/controls/DragControls.js';
-
-//import of secondary functions
-import { createMaterialButtons } from './secondary_functions/materialAndBakButtons.js';
-import { changeTexture } from './secondary_functions/changeTexture.js';
-import { createSelectObjectButtons } from './secondary_functions/selectObjectButtons.js';
-
-let scene, camera, renderer, controls;
-let availableObjects  = ["model1", "model2", "model5", "model23", "model15"];
-let selectedObject = null;
-export {selectedObject};
-let objModel, imagePlane; // Correct gebruik van globale variabelen
-let boxHelper;
-let clipboardObject = null; // Voor het tijdelijk opslaan van het gekopieerde object
-let switchableObjects = []; // Lijst van objecten waartussen geschakeld kan worden
-let currentIndex = -1; // Huidige index in de lijst van switchableObjects
-let directionalLight; // Definieer directionalLight aan het begin van je script
-let lightIndex = 0;
-let newColor = 0;
-let newTexturePath = 0;
-let objects = [];
-let lights = [];
-
-let doekTeller = 1;
-export {doekTeller};
-
-let kleurTeller = -1;
-let kleurArray = [0xffffff, 0x80003a, 0x506432, 0xffc500, 0xb30019, 0xec410b];
-let raycaster = new THREE.Raycaster();
-let mouse = new THREE.Vector2();
-let isDragging = false;
-let previousMousePosition = {
-    x: 0,
-    y: 0
-};
-let currentDirectionIndex = 0; // Begin met de eerste richting
-const directions = ['Zuid', 'West', 'Noord', 'Oost']; // De mogelijke richtingen
-export {directions};
-// Beginwaarde voor de zoomfactor
-let zoomFactor = 100; // 100% betekent geen zoom
-
-
 function init(textureSrc) {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.z = 8;
     camera.position.y = 2;
-    
-// Parameters voor de orthografische camera
-// left, right, top, bottom, near, far
-//const aspect = window.innerWidth / window.innerHeight;
-//const d = 20; // Een constante om de dimensie van het zichtveld te bepalen
-//camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
 
-// Positie de camera voor een isometrisch perspectief
-//camera.position.set(20, 20, 20); // Je kunt met deze waarden experimenteren om het beste zicht te krijgen
-//camera.lookAt(scene.position); // Zorg ervoor dat de camera naar het midden van de scene kijkt
-
-// Voeg je camera toe aan de scene, net zoals je met een PerspectiveCamera zou doen
-scene.add(camera);
+    // Voeg je camera toe aan de scene, net zoals je met een PerspectiveCamera zou doen
+    scene.add(camera);
 
     // Toon de assen als hulplijnen
     const axesHelper = new THREE.AxesHelper(5); // De parameter specificeert de lengte van de assen
@@ -251,7 +225,6 @@ scene.add(camera);
     document.getElementById('canvasContainer').style.display = 'block';
     document.getElementById('canvasContainer').appendChild(renderer.domElement);
     window.addEventListener('resize', onWindowResize, false);
-    document.addEventListener('keydown', onDocumentKeyDown, false);
 
     animate();
 }
@@ -326,8 +299,8 @@ export function loadSelectedObject(object_name) {
             });
 
             // Set textures
-            changeTexture(objModel, "Bak", "obj/textures/bak/bak1.png");
-            changeTexture(objModel, "Doek", "obj/textures/doeken/doek2.png");
+            changeTexture(objModel, "Bak", "obj/textures/bak/bak1.png", true);
+            changeTexture(objModel, "Doek", "obj/textures/doeken/doek2.png", true);
 
             // Add the new object to the scene
             scene.add(objModel);
@@ -376,31 +349,11 @@ export function loadImage(textureSrc){
     };
 }
 
-// input to load new image
-export function loadNewImage() {
-    // Create a file input dynamically
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-
-    // When a file is selected
-    input.onchange = function(event) {
-        const file = event.target.files[0];
-        if (!file) return; // If no file selected, exit
-
-        const fileReader = new FileReader();
-        
-        // On file load
-        fileReader.onload = function(e) {
-            loadImage(e.target.result)
-        };
-
-        fileReader.readAsDataURL(file); // Read the selected file as a Data URL
-    };
-
-    input.click(); // Trigger the file input dialog
+export function checkForselectedObject() {
+    if (selectedObject == null) {
+        alert("Je moet eerst een markies selecteren door erop te klikken.");
+    }
 }
-
 
 function addLighting() {
     // Ambient Light toevoegen
@@ -431,30 +384,6 @@ function addLighting() {
     
     // Meer lichtbronnen hier toevoegen volgens behoefte
     // Bijvoorbeeld PointLight, SpotLight, etc.
-}
-
-function switchLighting(trigger) {
-    if (trigger === "all") {
-        // Als "all" wordt meegegeven, zet dan alle lichten aan
-        lights.forEach((light) => {
-            light.visible = true;
-        });
-    } else {
-    // Huidig licht uitzetten
-    lights[lightIndex].visible = false;
-    
-    // Naar het volgende licht gaan
-    lightIndex = (lightIndex + 1) % lights.length;
-    
-    // Huidig licht uitzetten
-    lights[lightIndex].visible = false;
-    
-    // Naar het volgende licht gaan
-    lightIndex = (lightIndex + 1) % lights.length;
-    
-    // Nieuw licht aanzetten
-    lights[lightIndex].visible = true;
-    }
 }
 
 function animate() {
@@ -494,14 +423,15 @@ export function exportSceneAsImage() {
 
 // Function to copy the selected object. exported to buttonFunctions.js
 export function copyObject() {
+    checkForselectedObject();
     if (selectedObject) {
         clipboardObject = selectedObject.clone();
-        console.log('Object copied to clipboard.');
     }
 }
 
 // Function to paste the copied object
 export function pasteObject() {
+    checkForselectedObject();
     if (clipboardObject) {
         const objectClone = clipboardObject.clone();
         scene.add(objectClone);
@@ -512,7 +442,6 @@ export function pasteObject() {
         selectedObject = objectClone;
         updateBoundingBox(); // Update the bounding box
         currentIndex = switchableObjects.length - 1; // Update current index to the newly added object
-        console.log('Object pasted from clipboard.');
     }
 }
 
@@ -542,169 +471,18 @@ function removeBoundingBox() {
 
 export function changeLightDirection(direction) {
     let targetPosition = new THREE.Vector3(0, 0, 0); // Stel dit in op de positie van je focuspunt in de scene
-    
+    console.log(direction);
     switch(direction) {
-        case 'Zuid':
+        case 'Voor':
             directionalLight.position.set(0, 10, 10);
             break;
-        case 'West':
-            directionalLight.position.set(-10, 10, 0);
+        case 'Links':
+            directionalLight.position.set(5, 5, 5);
             break;
-        case 'Noord':
-            directionalLight.position.set(0, 10, -10);
-            break;
-        case 'Oost':
-            directionalLight.position.set(10, 10, 0);
+        case 'Rechts':
+            directionalLight.position.set(-5, 5, 5);
             break;
     }
-    
     directionalLight.target.position.copy(targetPosition); // Richt het licht
     directionalLight.target.updateMatrixWorld();
 }
-
-function updateZoomPercent() {
-    document.getElementById('zoomPercent').value = `${zoomFactor}%`;
-}
-
-document.getElementById('zoomIn').addEventListener('click', function() {
-    zoomFactor += 1; // Verhoog de zoomfactor met 1% bij inzoomen
-    camera.position.z *= 0.99; // Pas deze factor aan om de zoomsnelheid te wijzigen
-    updateZoomPercent();
-});
-
-document.getElementById('zoomOut').addEventListener('click', function() {
-    zoomFactor -= 1; // Verlaag de zoomfactor met 1% bij uitzoomen
-    camera.position.z /= 0.99; // Pas deze factor aan om de zoomsnelheid te wijzigen
-    updateZoomPercent();
-});
-
-document.getElementById('zoomReset').addEventListener('click', function() {
-    const zoomPercentInput = document.getElementById('zoomPercent').value;
-    const percent = parseInt(zoomPercentInput, 10);
-    if (!isNaN(percent) && percent > 0) {
-        zoomFactor = percent;
-        // Stel hier de originele camera-afstand in; pas deze waarde aan naar je standaard camera-z
-        const originalDistance = 8; // Voorbeeldafstand
-        camera.position.z = originalDistance * (100 / percent);
-    } else {
-        // Stel de camera opnieuw in op de standaardafstand als de input ongeldig is
-        camera.position.z = 8; // Voorbeeldafstand
-        zoomFactor = 100; // Reset naar 100% zoom
-    }
-    updateZoomPercent();
-});
-
-// Initialiseer het zoompercentage wanneer de pagina laadt
-updateZoomPercent();
-
-function onDocumentKeyDown(event) {
-    let stepSize = event.shiftKey ? 0.05 : 0.01; // Grotere stap als Shift is ingedrukt
-    switch (event.key) {
-        case 's':
-            if (switchableObjects.length > 0) {
-                currentIndex = (currentIndex + 1) % switchableObjects.length; // Ga naar het volgende object, met looping
-                selectedObject = switchableObjects[currentIndex];
-                updateBoundingBox();
-            }
-            break;
-        case 'c':
-            if (selectedObject) {
-                clipboardObject = selectedObject.clone();
-            }
-            break;
-        case 'v':
-            if (clipboardObject) {
-                const objectClone = clipboardObject.clone();
-                scene.add(objectClone);
-                objectClone.position.x += 1; // Pas de positie enigszins aan
-                
-                // Voeg het gekloonde object toe aan switchableObjects en maak het het geselecteerde object
-                switchableObjects.push(objectClone);
-                selectedObject = objectClone;
-                updateBoundingBox();
-                currentIndex = switchableObjects.length - 1; // Update de huidige index naar het nieuw toegevoegde object
-            }
-            break;
-        case '+': // Voor schaalvergroting met '+' (gebruikers moeten 'Shift+ =' drukken) true for upscale
-            if (selectedObject) {
-                scaleObject(selectedObject, true);
-            }
-            break;
-        case '-': // Voor schaalverkleining, false for down
-            if (selectedObject) {
-                scaleObject(selectedObject, false);
-            }
-            break;
-        case 'l':
-            switchLighting();
-            break;
-        case 'L':
-            switchLighting("all");
-            break;
-        case 'w':
-            // scale down horizontal (false)
-            scaleHorizontal(selectedObject, false)
-            break;
-        case 'W':
-            // scale up horizontal (true)
-            scaleHorizontal(selectedObject, true)
-            break;
-        case 'k':
-            kleurTeller++; // Verhoog de teller met 1
-            if (kleurTeller > kleurArray.length) kleurTeller = 0;
-            newColor = kleurArray[kleurTeller];
-            changeTexture(doekTeller, newColor);
-            break;
-        case 't':
-            doekTeller++; // Verhoog de teller met 1
-            if (doekTeller > 6) doekTeller = 1;
-            changeTexture(doekTeller, objModel);
-            break;
-        case 'r':
-            // Roteer 1 graad naar rechts
-            imagePlane.rotation.z -= Math.PI / 180; // 1 graad naar rechts
-            updateBoundingBox();
-            break;
-        case 'R':
-            // Roteer 1 graad naar links
-            imagePlane.rotation.z += Math.PI / 180; // 1 graad naar links
-            updateBoundingBox();
-            break;
-                
-        case 'p':
-            exportSceneAsImage();
-            break;
-        case 'q':
-            document.getElementById('info').style.display = 'none';
-            break;
-        case 'Q':
-            document.getElementById('info').style.display = 'block';
-            break;
-        case 'Z':
-            // Roep de changeLightDirection functie aan met de huidige richting
-            changeLightDirection(directions[currentDirectionIndex]);
-            // Update de index voor de volgende richting, loop terug naar 0 als we het einde van de array bereiken
-            currentDirectionIndex = (currentDirectionIndex + 1) % directions.length;
-            break;
-        case 'ArrowUp':
-            if (selectedObject) selectedObject.position.y += stepSize;
-            updateBoundingBox();
-            break;
-        case 'ArrowDown':
-            if (selectedObject) selectedObject.position.y -= stepSize;
-            updateBoundingBox();
-            break;
-        case 'ArrowLeft':
-            if (selectedObject) selectedObject.position.x -= stepSize;
-            updateBoundingBox();
-            break;
-        case 'ArrowRight':
-            if (selectedObject) selectedObject.position.x +=stepSize;
-            updateBoundingBox();
-            break;
-    }
-}
-
-//init();
-
-

@@ -1,7 +1,12 @@
 import * as THREE from 'three';
+import { checkForselectedObject } from '../app.js';
 
 // Function to change texture of an object
-export function changeTexture(selectedObject, materialName, texturePath) {
+export function changeTexture(selectedObject, materialName, texturePath, firstObject=false) {
+    // if no object is selected prompt the user.
+    if (!firstObject){
+        checkForselectedObject();
+    }
     // Load the new texture
     const newTexture = new THREE.TextureLoader().load(texturePath, (texture) => {
         // Ensure the texture wraps and repeats

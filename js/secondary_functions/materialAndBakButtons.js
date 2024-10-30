@@ -9,9 +9,11 @@ export function createMaterialButtons() {
     let doekPath = 'obj/textures/doeken/';
     let bakPath = 'obj/textures/bak/';
     // Maak materiaal knop. false voor bak, true voor doek
+    // nummer staat voor nummer in de png. Dit geval bak1.png t/m bak4.png bij true is het voor doek{}.png
     createMaterialButton(1, bakPath, bakButtonsContainer, false);
     createMaterialButton(2, bakPath, bakButtonsContainer, false);
     createMaterialButton(3, bakPath, bakButtonsContainer, false);
+    createMaterialButton(4, bakPath, bakButtonsContainer, false);
 
     // Maak doekvariaties aan in een dropdown
     // doekIndex, array met andere doeken variaties, container van het document, type textuur
