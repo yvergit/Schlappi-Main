@@ -458,15 +458,25 @@ export function copyObject() {
 export function pasteObject() {
     checkForselectedObject();
     if (clipboardObject) {
+        // Clone the object
         const objectClone = clipboardObject.clone();
+
+        // Ensure the cloned object has a unique material
+        objectClone.traverse((child) => {
+            if (child.isMesh) {
+                // Clone the material to ensure it's unique
+                child.material = child.material.clone();
+            }
+        });
+
+        // Add the cloned object to the scene and adjust position
         scene.add(objectClone);
         objectClone.position.x += 1; // Adjust position slightly
-        
+
         // Add the cloned object to switchableObjects and make it the selected object
         switchableObjects.push(objectClone);
         selectedObject = objectClone;
         updateBoundingBox(); // Update the bounding box
-        currentIndex = switchableObjects.length - 1; // Update current index to the newly added object
     }
 }
 
