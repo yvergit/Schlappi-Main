@@ -20,7 +20,7 @@ In de PHP map moet een 'allowed_emails.json' bestand worden toegevoegd met alle 
 {
     "allowed_emails":
     [
-        "thijnbroekhuizen@gmail.com"
+        "dennis.vanden.broek@indicia.nl"
     ]
 }
 
