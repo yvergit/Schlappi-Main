@@ -419,7 +419,7 @@ body {
 }
 
 /* Code wrapper styles */
-.code-wrapper {
+.email-wrap {
     max-width: 500px;
     margin: 2rem auto;
     padding: 2rem;
@@ -431,8 +431,8 @@ body {
     gap: 1rem; /* Add consistent vertical spacing between all child elements */
   }
   
-  .code-wrapper input[type="email"],
-  .code-wrapper input[type="text"] {
+  .email-wrap input[type="email"],
+  .email-wrap input[type="text"] {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #ddd;
@@ -440,7 +440,7 @@ body {
     font-size: 1rem;
   }
   
-  .code-wrapper button {
+  .email-wrap button {
     width: 100%;
     padding: 0.75rem;
     border: none;

@@ -4,6 +4,25 @@ let canRequestCode = true; // Flag to control code request
 const requestCooldown = 30000; // 30 seconds in milliseconds
 let countdownTimer; // Variable to hold the countdown timer
 
+// Helper functions to set and get cookies
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = `${name}=${value}; ${expires}; path=/`;
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        while (cookie.charAt(0) === ' ') cookie = cookie.substring(1);
+        if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
+    }
+    return null;
+}
+
 // Function to start the countdown
 function startCooldownTimer(duration) {
     let remainingTime = duration / 1000; // Convert milliseconds to seconds
@@ -20,6 +39,12 @@ function startCooldownTimer(duration) {
             remainingTime--;
         }
     }, 1000); // Update every second
+}
+
+// Check if the user is already verified
+if (getCookie('verified') === 'true') {
+    document.getElementById('email').style.display = 'none';
+    init_upload(); // Skip verification and proceed to upload section
 }
 
 // Request verification code
@@ -50,7 +75,7 @@ document.getElementById('requestCodeButton').addEventListener('click', function(
         alert(result); // Display the message returned by the PHP script
         console.log(result);
         // Check if the response indicates that the verification code was sent
-        if (result.includes("Verificatiecode verzonden")) { // Update to the correct message
+        if (result.includes("Verificatiecode verzonden")) {
             document.getElementById('verificationCodeInput').style.display = 'block';
             document.getElementById('verifyCodeButton').style.display = 'block';
             document.getElementById('spamCheckMessage').style.display = 'block'; // Show spam check message
@@ -81,13 +106,10 @@ document.getElementById('verifyCodeButton').addEventListener('click', function()
     .then(result => {
         if (result === 'valid') {
             // Disable email and code input fields
-            document.getElementById('emailInput').disabled = true;
-            document.getElementById('verificationCodeInput').style.display = 'none';
-            document.getElementById('requestCodeButton').style.display = 'none';
-            document.getElementById('verifyCodeButton').style.display = 'none';
-            document.getElementById('timerMessage').style.display = 'none';
-            document.getElementById('spamCheckMessage').style.display = 'none';
-            document.getElementById('codeStatus').style.display = 'none';
+            document.getElementById('email').style.display = 'none';
+
+            // Set a cookie to remember the verification for 30 days
+            setCookie('verified', 'true', 30);
 
             // Show the file upload section
             init_upload();
