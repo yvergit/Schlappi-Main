@@ -423,28 +423,84 @@ function onWindowResize() {
 }
 
 export function exportSceneAsImage() {
+    console.log("Screenshotfunctie gestart");
+    
     // Renderer uitlezen naar een Data URL
-    var imgData, imgNode;
+    var imgData;
     try {
         var strMime = "image/jpg";
         imgData = renderer.domElement.toDataURL(strMime);
-                
-        // Maak een link en klik er programmatisch op om de afbeelding te downloaden
-        var link = document.createElement('a');
-        if (typeof link.download === 'string') {
-            document.body.appendChild(link); // Firefox vereist dat de link deel uitmaakt van het document
-            link.download = 'scene.jpg';
-            link.href = imgData;
-            link.click();
-            document.body.removeChild(link); // Verwijder de link wanneer het niet meer nodig is
-        } else {
-            location.replace(uri);
-        }
+        
+        // Laad de screenshot in een nieuwe afbeelding om bewerking mogelijk te maken
+        const img = new Image();
+        img.onload = function() {
+            console.log("Screenshot geladen in nieuwe afbeelding");
+
+            const borderSize = 80; // Verhoogd om rand 4x zo dik te maken
+            const canvasWidth = renderer.domElement.width + borderSize * 2;
+            const canvasHeight = renderer.domElement.height + borderSize * 2;
+
+            // Maak een nieuw canvas voor de afbeelding met rand en logo
+            const offscreenCanvas = document.createElement("canvas");
+            offscreenCanvas.width = canvasWidth;
+            offscreenCanvas.height = canvasHeight;
+            const ctx = offscreenCanvas.getContext("2d");
+
+            // Teken zwarte rand als achtergrond
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            // Teken de screenshot in het midden van het nieuwe canvas
+            ctx.drawImage(img, borderSize, borderSize);
+
+            // Laad en teken het logo op de rand (canvas) zelf
+            const logo = new Image();
+            logo.src = "img/logo-schlappi.png"; // Controleer het pad
+            logo.onload = function() {
+                console.log("Logo geladen en toegevoegd aan canvas");
+
+                const logoWidth = 200; // Pas aan indien nodig
+                const logoHeight = 50; // Pas aan indien nodig
+
+                // Plaatsing van logo in de zwarte rand
+                const logoX = canvasWidth - logoWidth - (borderSize / 2);
+                const logoY = canvasHeight - logoHeight - (borderSize / 4);
+
+                // Teken logo op de rand
+                ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
+
+                // Converteer het aangepaste canvas naar een afbeelding en download
+                const finalImageData = offscreenCanvas.toDataURL("image/jpg");
+
+                // Maak een link en klik er programmatisch op om de afbeelding te downloaden
+                const link = document.createElement('a');
+                if (typeof link.download === 'string') {
+                    document.body.appendChild(link); // Firefox vereist dat de link deel uitmaakt van het document
+                    link.download = 'scene_with_border.jpg';
+                    link.href = finalImageData;
+                    link.click();
+                    document.body.removeChild(link); // Verwijder de link wanneer het niet meer nodig is
+                    console.log("Screenshot gedownload met rand en logo");
+                } else {
+                    location.replace(finalImageData);
+                }
+            };
+            logo.onerror = function() {
+                console.error("Fout bij laden van logo. Controleer het pad naar het logo.");
+            };
+        };
+        img.onerror = function() {
+            console.error("Fout bij laden van screenshot afbeelding.");
+        };
+        img.src = imgData;
     } catch (e) {
-        console.error(e);
-        return;
+        console.error("Er is een fout opgetreden:", e);
     }
 }
+
+
+
+
 
 // Function to copy the selected object. exported to buttonFunctions.js
 export function copyObject() {
@@ -458,25 +514,15 @@ export function copyObject() {
 export function pasteObject() {
     checkForselectedObject();
     if (clipboardObject) {
-        // Clone the object
         const objectClone = clipboardObject.clone();
-
-        // Ensure the cloned object has a unique material
-        objectClone.traverse((child) => {
-            if (child.isMesh) {
-                // Clone the material to ensure it's unique
-                child.material = child.material.clone();
-            }
-        });
-
-        // Add the cloned object to the scene and adjust position
         scene.add(objectClone);
         objectClone.position.x += 1; // Adjust position slightly
-
+        
         // Add the cloned object to switchableObjects and make it the selected object
         switchableObjects.push(objectClone);
         selectedObject = objectClone;
         updateBoundingBox(); // Update the bounding box
+        currentIndex = switchableObjects.length - 1; // Update current index to the newly added object
     }
 }
 
