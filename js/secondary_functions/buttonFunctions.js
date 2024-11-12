@@ -1,4 +1,4 @@
-import { selectedObject, copyObject, pasteObject, changeLightDirection, directions, loadImage, exportSceneAsImage, checkForselectedObject } from "../app.js";
+import { selectedObject, copyObject, pasteObject, changeLightDirection, directions, loadImage, exportSceneAsImage, checkForselectedObject, zoomIn, zoomOut } from "../app.js";
 import { scaleHorizontal, scaleObject, rotateObject } from "./scaleAndRotateObject.js";
 
 let currentDirectionIndex = 0;
@@ -107,6 +107,16 @@ document.getElementById('increaseHorizontalSizeButton').addEventListener('moused
 document.getElementById('decreaseHorizontalSizeButton').addEventListener('mousedown', () => startContinuousExecution(decreaseHorizontalSize));
 document.getElementById("rotateLeftButton").addEventListener('mousedown', () => startContinuousExecution(rotateLeft));
 document.getElementById("rotateRightButton").addEventListener('mousedown', () => startContinuousExecution(rotateRight));
+// Event listeners for continuous zoom on hold
+document.getElementById("zoomIn").addEventListener('mousedown', () => startContinuousExecution(zoomIn));
+document.getElementById("zoomOut").addEventListener('mousedown', () => startContinuousExecution(zoomOut));
+
+// Stop continuous execution on mouseup or mouseleave for zoom buttons
+document.getElementById("zoomIn").addEventListener('mouseup', stopContinuousExecution);
+document.getElementById("zoomIn").addEventListener('mouseleave', stopContinuousExecution);
+document.getElementById("zoomOut").addEventListener('mouseup', stopContinuousExecution);
+document.getElementById("zoomOut").addEventListener('mouseleave', stopContinuousExecution);
+
 
 document.getElementById('selectButton').addEventListener('click', showSelectObject);
 document.getElementById('uploadImageButton').addEventListener('click', loadNewImage);
