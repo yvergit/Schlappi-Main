@@ -55,13 +55,13 @@ export function init_upload() {
             document.getElementById('uploadContainer').style.display = 'none'; 
             document.getElementById('homeImage').style.display = 'none'; 
             document.getElementById('homeForm').style.display = 'none'; 
-            document.getElementById('info').style.display = 'block';
-            document.getElementById('zoomControls').style.display = 'block';
             document.getElementById('objectContainer').style.display = 'flex';
-            document.getElementById('materialContainer').style.display = 'block';
-            document.getElementById('bakContainer').style.display = 'block';
+            document.getElementById('materialButtonsContainer').style.display = 'flex';
+            document.getElementById('bakButtonsContainer').style.display = 'flex';
             document.getElementById('topBanner').style.display = 'flex';
-            document.getElementById('buttonContainer').style.display = 'block';
+            document.getElementById('buttonContainer').style.display = 'flex';
+            document.getElementById('right-bottom').style.display = 'flex';
+            
 
             // Start the Three.js scene with the image as argument
             init(event.target.result);
@@ -420,6 +420,14 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+export function zoomIn(){
+    camera.position.z *= 0.99; // Pas deze factor aan om de zoomsnelheid te wijzigen
+}
+
+export function zoomOut(){
+    camera.position.z /= 0.99; // Pas deze factor aan om de zoomsnelheid te wijzigen
 }
 
 export function exportSceneAsImage() {

@@ -12,112 +12,67 @@ body {
     height: 100vh;
     align-items: center;
 }
-#materialContainer {
-    display: none;
-    position: fixed;
-    top: 80px;
-    left: 20px;
-    background-color: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
-    width: 280px;
-    transition: all 0.3s ease;
+
+#materialContainerBlock, #bakContainerBlock {
+    border-top: 1px solid rgb(199, 199, 199);
+    padding: 15px;
+}
+
+#materialButtonsContainer, #bakButtonsContainer{
+    display: flex;
+    align-content: center;
+    gap: 10px;
+}
+
+#materialContainer{
+    padding-left: 50px;
 }
 
 #bakContainer {
-    display: none;
-    position: fixed;
-    top: 80px;
-    left: 350px;
-    background-color: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
-    width: 280px;
-    transition: all 0.3s ease;
+    padding-left: 50px;
 }
 
 #materialTitle {
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.materialContainer, .bakContainer {
-    position: relative;
     display: inline-block;
-    margin: 5px;
+    padding-bottom: 10px;
 }
 
-#materialContainer button, .bakContainer button {
-    width: 60px;
-    height: 60px;
+.materialButton, .bakButton {
+    width: 50px;
+    height: 50px;
     border: none;
-    border-radius: 10px;
+    border-radius: 50%;          /* Use percentage for circular shape */
     background-color: #f0f0f0;
     transition: all 0.2s ease;
     cursor: pointer;
     overflow: hidden;
-    padding: 0;
-    position: relative;
+    padding: 0;                  /* Remove padding to avoid spacing issues */
 }
 
-#materialContainer button:hover, .bakContainer button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-#materialContainer button img, .bakContainer button img {
-    width: 250%;
-    height: 250%;
+.materialButton img, .bakButton img{
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -70%);
-    transition: all 0.3s ease;
-}
-
-#materialContainer button:hover img, .bakContainer button:hover img {
-    width: 275%;
-    height: 275%;
+    border-radius: 50%;          /* Apply the same border-radius to the image */
 }
 
 .materialDropdown {
     position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
     background-color: white;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
     display: none;
-    z-index: 10;
-    max-width: calc(100vw - 40px); /* Prevent it from exceeding the viewport width */
     width: auto;
-    white-space: normal; /* Allow text to wrap normally */
     overflow: hidden; /* Hide overflow */
-    display: grid; /* Use grid layout */
-    grid-template-columns: repeat(2, 1fr); /* Create two equal columns */
-    gap: 10px; /* Add spacing between items */
+    display: table-row; /* Use grid layout */
 }
 
 /* Style for each option in the dropdown */
 .materialBox {
     background-color: #f9f9f9; /* Option background color */
-    border-radius: 3px; /* Rounded corners */
+    border-radius: 25px; /* Rounded corners */
     padding: 5px; /* Padding around options */
     cursor: pointer; /* Pointer cursor on hover */
-    text-align: center; /* Center the text */
     transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
@@ -133,11 +88,97 @@ body {
     border-radius: 25%;
 }
 
+/* The switch container */
+#switchContainer {
+    display: flex;
+    position: fixed;
+    right: 20px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+/* Wrapper for each switch and its text */
+.switchWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between the switch and the text */
+}
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px; /* Adjust width */
+    height: 24px; /* Adjust height */
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+/* When the checkbox is checked, change the slider color */
+input:checked + .slider {
+    background-color: #f30000;
+}
+
+/* When the checkbox is focused, add a shadow */
+input:focus + .slider {
+    box-shadow: 0 0 1px #fa0101;
+}
+
+/* When the checkbox is checked, move the knob */
+input:checked + .slider:before {
+    transform: translateX(25px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Styling for the switch text */
+.switch-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    padding-right: 20px;
+}
+
+
 .button-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
 }
 
 /* Add this to show the dropdown on hover */
@@ -145,91 +186,91 @@ body {
     display: block;
 }
 
-/* Media query for smaller screens */
-@media (max-width: 480px) {
-    .colorDropdown {
-        left: 0;
-        transform: none;
-        width: 100%;
-        white-space: normal;
-    }
-
-    .colorBox {
-        width: 30px;
-        height: 30px;
-    }
+.right-bottom-buttons {
+    display: none;
+    position: fixed; /* Add this to make it fixed in the bottom right corner */
+    right: 30px;
+    bottom: 30px;
+    gap: 7px; /* Add some space between buttons if needed */
 }
+
+.right-bottom-buttons .bottom-button {
+    background-color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+}
+
+.right-bottom-buttons .bottom-button :hover {
+    background-color: rgb(221, 221, 221);
+}
+
 
 #objectContainer {
     display: none;
+    flex-direction: column; /* Vertical alignment for top and bottom sections */
+    align-items: center;
     position: fixed;
     left: 50%;
     top: 50%;
-    width: 750px;
-    height: 80%;
+    max-width: 90%; /* Max width to prevent overflow */
+    max-height: 90%; /* Max height to prevent overflow */
     transform: translate(-50%, -50%);
-    flex-wrap: wrap;
-    background-color: rgba(255, 255, 255, 0.95);
-    justify-content: center;
-    gap: 15px; /* Improved spacing between elements */
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     font-family: 'Arial', sans-serif;
-    text-align: center;
-    transition: all 0.3s ease;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f0f4f8; /* Soft background for visual separation */
+    background-color: #ffffff;
+    border-radius: 8px;
+    gap: 20px;
+}
+
+/* Top container styling */
+.topObjectContainer {
+    display: flex;
+    width: 100%;
+    height: 50px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgb(199, 199, 199);
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+/* Grid styling for object buttons */
+.objectButtonsContainer {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    background-color: #f9f9f9;
     border-radius: 8px;
 }
 
-#objectTitle {
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-}
-
+/* Individual button styling */
 #objectContainer button {
-    width: 125px;
+    width: 100%;
     height: 125px;
-    margin: 0 10px;
+    margin: 0;
     border: none;
     border-radius: 10%;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 #objectContainer button img {
     width: 90%;
     height: 90%;
     object-fit: contain;
-    transition: all 0.3s ease;
 }
 
 #objectContainer button:hover {
-    transform: translateY(-5px);
+    border: dotted;
     box-shadow: 0 12px 16px rgba(0, 0, 0, 0.2);
-}
-
-#objectContainer button:hover img {
-    transform: scale(1.1);
-}
-
-#objectContainer button:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5), 0 6px 12px rgba(0, 0, 0, 0.1);
-}
-
-#objectContainer button:active {
-    transform: translateY(2px);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .home-image {
@@ -307,32 +348,30 @@ body {
     }
 }
 
-#buttonContainer {
-    position: fixed;
-    left: 0;
-    top: 60%;
-    transform: translateY(-50%);
-    display: none;
-    flex-direction: column;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-radius: 0 10px 10px 0;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
 #topBanner {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 10px;
+    height: 50px;
+    left: 50%;
+    transform: translateX(-50%);
     right: 0;
+    width: 95%;
     background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: none;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
+    border-radius: 5px;
 }
+
+.topBannerButtonContainer {
+    display: flex;                  /* Use flexbox to align buttons horizontally */
+    gap: 20px;                      /* Add space between buttons */
+    justify-content: flex-start;    /* Align buttons to the left */
+    flex-wrap: nowrap;              /* Prevent buttons from wrapping to a new line */
+}
+
 
 .banner-content h1 {
     margin: 0;
@@ -340,31 +379,30 @@ body {
     color: #333333;
 }
 
-.banner-buttons {
-    display: flex;
-    gap: 10px;
-}
-
 .banner-button {
+    display: flex;   
+    border: none;    
+    border-radius: 5px;        /* Use flexbox to align image and text */
+    align-items: center;         /* Vertically center the items */
     padding: 8px 16px;
-    background-color: #f3f3f3;
-    color: rgb(0, 0, 0);
-    border: 2px;
-    border-radius: 4px;
+    background-color: #ffffff;    /* Add border to make it visible */
     cursor: pointer;
     transition: background-color 0.3s;
-    text-align: center;  /* Center the text horizontally */
-    font-weight: bold;   /* Make the text bold */
+    text-align: center;
 }
 
 .banner-button img {
-    width: auto; /* Image width */
-    height: 24px;  /* Image height */
-    margin-right: 10px;  /* Space between image and text */
+    width: 30px;                 /* Set image width */
+    height: 30px;                /* Set image height */
+    margin-right: 10px;          /* Space between image and text */
+}
+
+.banner-text {
+    display: inline-block;
 }
 
 .banner-button:hover {
-    background-color: #0056b3;
+    background-color: #e0e0e0;
 }
 
 .banner-logo {
@@ -392,11 +430,29 @@ body {
     }
 }
 
+#buttonContainer {
+    position: fixed;
+    left: 25px;
+    bottom: 25px;
+    display: none;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #ffffff;
+    width: 250px;
+    border-radius: 15px;
+    gap: 5px;
+}
+
+#buttonContainer .button-text{
+    padding-left: 10px;
+    padding-top: 12px;
+    font-weight: 700;
+}
+
 .icon-button {
     display: flex;
     align-items: center;
     padding: 10px;
-    margin: 5px 0;
     border: none;
     background-color: #ffffff;
     cursor: pointer;
@@ -409,9 +465,14 @@ body {
 }
 
 .icon-button img {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+}
+
+.bottom-button img {
     width: 24px;
     height: 24px;
-    margin-right: 10px;
 }
 
 .icon-button span {

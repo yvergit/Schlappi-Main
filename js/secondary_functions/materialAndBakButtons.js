@@ -59,7 +59,9 @@ function createMaterialButton(index, imagePath, container, doek) {
     container.appendChild(materialContainer);
 }
 
-// Algemene functie om dropdowns te maken voor variaties of kleuren. 
+// Keep track of the currently open dropdown
+let currentlyOpenDropdown = null;
+
 function createMaterialDropdown(doekIndex, options, imagePath, container) {
     const materialContainer = document.createElement('div');
     materialContainer.classList.add('materialContainer');
@@ -77,40 +79,58 @@ function createMaterialDropdown(doekIndex, options, imagePath, container) {
     const dropdown = document.createElement('div');
     dropdown.classList.add('materialDropdown');
     dropdown.style.display = 'none'; // In eerste instantie verborgen
+    materialContainer.appendChild(dropdown);
 
-    // Toon dropdown bij hover
-    materialContainer.onmouseenter = () => {
-        dropdown.style.display = 'block';
-    };
-    materialContainer.onmouseleave = () => {
-        dropdown.style.display = 'none';
-    };
-
-    // Loop door opties en voeg ze toe als items in de dropdown
+    // Add options to the dropdown
     options.forEach(option => {
         let optionPath = imagePath + `doek${option}.png`;
         const optionDiv = document.createElement('div');
         optionDiv.classList.add('materialBox');
 
-        // Maak een preview afbeelding op basis van het type
-        const previewImage = createPreviewImage(
-            optionPath, 
-        );
-        
+        // Maak een preview afbeelding
+        const previewImage = createPreviewImage(optionPath);
         optionDiv.appendChild(previewImage);
 
-        // Eventlistener om textuur of kleur te veranderen bij klikken
+        // Event listener om textuurverandering
         optionDiv.addEventListener('click', () => {
-            changeTexture(selectedObject, 'Doek', optionPath); // Pas de geselecteerde textuurvariatie toe
+            changeTexture(selectedObject, 'Doek', optionPath);
+            dropdown.style.display = 'none'; // Verberg de dropdown na selectie
+            currentlyOpenDropdown = null; // Reset the currently open dropdown
         });
 
         dropdown.appendChild(optionDiv);
     });
 
-    // Voeg de dropdown toe aan de materiaalcontainer
-    materialContainer.appendChild(dropdown);
+    // Gebruik specifieke event listeners voor de knop zelf
+    button.addEventListener('click', (event) => {
+        // Stop bubbling to prevent unintended closures
+        event.stopPropagation();
+
+        // Close any currently open dropdown if it's not the same as this one
+        if (currentlyOpenDropdown && currentlyOpenDropdown !== dropdown) {
+            currentlyOpenDropdown.style.display = 'none';
+        }
+
+        // Toggle current dropdown visibility
+        const isVisible = dropdown.style.display === 'flex';
+        dropdown.style.display = isVisible ? 'none' : 'flex';
+
+        // Set or clear the currently open dropdown
+        currentlyOpenDropdown = dropdown.style.display === 'flex' ? dropdown : null;
+    });
+
+    // Add click event listener to the document to close the dropdown when clicked outside
+    document.addEventListener('click', (event) => {
+        if (currentlyOpenDropdown && !materialContainer.contains(event.target)) {
+            currentlyOpenDropdown.style.display = 'none';
+            currentlyOpenDropdown = null;
+        }
+    });
+
     container.appendChild(materialContainer);
 }
+
+
 
 // Functie om een preview afbeelding te maken. Dit zet de kleur over het materiaal heen in preview.
 function createPreviewImage(texturePath, color) {

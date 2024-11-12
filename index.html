@@ -44,57 +44,50 @@
                 </div>
             </div>
         </div>
-
-        <div id="info" style="display:none;"></div>
-        <div id="zoomControls" style="position: fixed; top: 10px; right: 10px; background: white; padding: 10px; display:none;">
-            <button id="zoomIn">Inzoomen</button>
-            <button id="zoomOut">Uitzoomen</button>
-            <input type="text" id="zoomPercent" placeholder="100%" style="width: 60px;">
-            <button id="zoomReset">OK</button>
-        </div>
         <div id="canvasContainer" style="display: none;">
             <!-- Three.js canvas will be added here by the init function -->
         </div>
 
         <div id="topBanner">
-            <div class="buttonContainer">
+            <div class="topBannerButtonContainer">
                 <button id="uploadImageButton" class="banner-button">
                     <img src="img/icon.png" alt="Select object">
-                    <span>Laad nieuw plaatje</span>
+                    <div class="banner-text">Nieuwe foto</div>
+                </button>
+                <button id="changeLightDirection" class="banner-button">
+                    <img src="img/licht_icoon.png" alt="Verander licht punt">
+                    <div class="banner-text">Draai de zon</div>
                 </button>
                 <button id="selectButton" class="banner-button">
                     <img src="img/model1.jpg" alt="Select object">
-                    <span>Selecteer object</span>
+                    <div class="banner-text">Plaats nieuwe markies</div>
                 </button>
                 <button id="makeScreenshot" class="banner-button">
                     <img src="img/screenshot.jpg" alt="Screenshot">
-                    <span>Screenshot</span>
-                </button>
+                    <div class="banner-text">Exporteer afbeelding</div>
+                </button>  
             </div>
             <div class="banner-logo">
                 <img src="img/logo-schlappi.svg" alt="Logo">
             </div>
         </div>
         <div id="buttonContainer">
-            <button id="changeLightDirection" class="icon-button">
-                <img src="img/licht_icoon.png" alt="Verander licht punt">
-                <span>Verander licht punt</span>
-            </button>
+            <div class="button-text">Markies opties</div>
             <button id="increaseSizeButton" class="icon-button">
                 <img src="img/increase_size.png" alt="Increase Size">
-                <span>Vergroot markies</span>
+                <span>Vergroten</span>
             </button>
             <button id="decreaseSizeButton" class="icon-button">
                 <img src="img/decrease_size.png" alt="Decrease Size">
-                <span>Verklein markies</span>
+                <span>Verkleinen</span>
             </button>
             <button id="increaseHorizontalSizeButton" class="icon-button">
                 <img src="img/increase_horizontal.png" alt="Increase Horizontal Size">
-                <span>Vergroot breedte</span>
+                <span>Breder maken</span>
             </button>
             <button id="decreaseHorizontalSizeButton" class="icon-button">
                 <img src="img/decrease_horizontal.png" alt="Decrease Horizontal Size">
-                <span>Verklein breedte</span>
+                <span>Smaller maken</span>
             </button>
             <button id="rotateRightButton" class="icon-button">
                 <img src="img/right.png" alt="Decrease Horizontal Size">
@@ -106,27 +99,71 @@
             </button>
             <button id="copyButton" class="icon-button">
                 <img src="img/copy.png" alt="Copy">
-                <span>Kopieer markies</span>
+                <span>Kopieer</span>
             </button>
             <button id="pasteButton" class="icon-button">
                 <img src="img/paste.png" alt="Paste">
-                <span>Plak markies</span>
+                <span>Plakken</span>
+            </button>
+            <div id="materialContainerBlock">
+                <div id="materialTitle">Doeken</div>
+                <div id="materialButtonsContainer">
+                </div> <!-- This is where buttons will be generated -->
+            </div>
+
+            <div id="bakContainerBlock">
+                <div id="materialTitle">Frame</div>
+                <div id="bakButtonsContainer"></div> <!-- This is where buttons will be generated -->
+            </div>
+        </div>
+
+        <div id="right-bottom" class="right-bottom-buttons">
+            <button id="zoomIn" class="bottom-button">
+                <img src="img/zoomIn.png" alt="zoomIn">
+            </button>
+            <button id="zoomOut" class="bottom-button">
+                <img src="img/zoomOut.png" alt="zoomOut">
+            </button>
+            <button id="ding1" class="bottom-button">
+                <img src="img/paste.png" alt="zoomIn">
+            </button>
+            <button id="ding2" class="bottom-button">
+                <img src="img/paste.png" alt="zoomIn">
             </button>
         </div>
 
-        <div id="materialContainer">
-            <div id="materialTitle">Doeken</div>
-            <div id="materialButtonsContainer"></div> <!-- This is where buttons will be generated -->
-        </div>
-
-        <div id="bakContainer">
-            <div id="materialTitle">Bak</div>
-            <div id="bakButtonsContainer"></div> <!-- This is where buttons will be generated -->
-        </div>
-
         <div id="objectContainer">
-            <div id="objectButtonsContainer"></div> <!-- This is where buttons will be generated -->
+            <div class="topObjectContainer">
+                <!-- Two switches to control container visibility -->
+                <div id="switchContainer">
+                    <!-- First Switch with Text -->
+                    <div class="switchWrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="switch1">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="switch-text">Omkisting</span> <!-- Text label for switch1 -->
+                    </div>
+                
+                    <!-- Second Switch with Text -->
+                    <div class="switchWrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="switch2">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="switch-text">Volant</span> <!-- Text label for switch2 -->
+                    </div>
+                </div>
+            </div>
+            <div class="objectButtonsContainer">
+                <!-- Containers for different object buttons -->
+                <div id="normalContainer"></div>
+                <div id="nobakContainer"></div>
+                <div id="straightContainer"></div>
+                <div id="straightnbContainer"></div>
+            </div>
         </div>
+           
     </div>
 
     <script type="importmap">
@@ -136,6 +173,67 @@
                 "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
             }
         }
+    </script>
+
+    <script>
+// Function to initialize the switch controls
+function setupSwitchControls() {
+    const switch1 = document.getElementById('switch1');
+    const switch2 = document.getElementById('switch2');
+
+    // Event listeners for the switches
+    switch1.addEventListener('change', updateContainerVisibility);
+    switch2.addEventListener('change', updateContainerVisibility);
+    
+    // Initialize the visibility of containers based on the default states of the switches
+    updateContainerVisibility();
+}
+
+// Function to update the visibility of containers based on switch states
+function updateContainerVisibility() {
+    const switch1 = document.getElementById('switch1');
+    const switch2 = document.getElementById('switch2');
+
+    // Get the current state of both switches (0 or 1)
+    const state1 = switch1.checked ? 1 : 0;
+    const state2 = switch2.checked ? 1 : 0;
+
+    // Combine the two states into a binary string
+    const combinedState = `${state1}${state2}`;
+
+    // Hide all containers initially
+    document.getElementById('normalContainer').style.display = 'none';
+    document.getElementById('nobakContainer').style.display = 'none';
+    document.getElementById('straightContainer').style.display = 'none';
+    document.getElementById('straightnbContainer').style.display = 'none';
+
+    // Control the visibility based on the combined state of the switches
+    switch (combinedState) {
+        case '11':
+            // Only 'normalContainer' visible
+            document.getElementById('normalContainer').style.display = 'block';
+            break;
+        case '10':
+            // Only 'straightContainer' visible
+            document.getElementById('straightContainer').style.display = 'block';
+            break;
+        case '01':
+            // Only 'nobakContainer' visible
+            document.getElementById('nobakContainer').style.display = 'block';
+            break;
+        case '00':
+            // Only 'straightnbContainer' visible
+            document.getElementById('straightnbContainer').style.display = 'block';
+            break;
+        default:
+            // Default case if no matching state
+            break;
+    }
+}
+
+// Call the setup function when the page loads
+document.addEventListener('DOMContentLoaded', setupSwitchControls);
+
     </script>
 
     <script src="js/app.js" type="module"></script>
