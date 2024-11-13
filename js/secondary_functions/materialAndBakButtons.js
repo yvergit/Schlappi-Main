@@ -10,80 +10,54 @@ export function createMaterialButtons() {
     let bakPath = 'obj/textures/bak/';
     // Maak materiaal knop. false voor bak, true voor doek
     // nummer staat voor nummer in de png. Dit geval bak1.png t/m bak4.png bij true is het voor doek{}.png
-    createMaterialButton(1, bakPath, bakButtonsContainer, false);
-    createMaterialButton(2, bakPath, bakButtonsContainer, false);
-    createMaterialButton(3, bakPath, bakButtonsContainer, false);
-    createMaterialButton(4, bakPath, bakButtonsContainer, false);
+    // createMaterialButton(1, bakPath, bakButtonsContainer, false);
+    // createMaterialButton(2, bakPath, bakButtonsContainer, false);
+    // createMaterialButton(3, bakPath, bakButtonsContainer, false);
+    // createMaterialButton(4, bakPath, bakButtonsContainer, false);
 
     // Maak doekvariaties aan in een dropdown
     // doekIndex, array met andere doeken variaties, container van het document, type textuur
+    createMaterialDropdown(1, [1, 2, 3, 4], bakPath, bakButtonsContainer, true);
     createMaterialDropdown(1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], doekPath, materialButtonsContainer);
     createMaterialDropdown(11, [11, 12, 13, 14], doekPath, materialButtonsContainer);
     createMaterialDropdown(15, [15, 16, 17, 18, 19, 20, 21, 22], doekPath, materialButtonsContainer);
 }
 
-// Algemene functie om een materiaal knop te maken
-function createMaterialButton(index, imagePath, container, doek) {
-    const materialContainer = document.createElement('div');
-    if (doek){
-        materialContainer.classList.add('materialContainer');
-    }else{
-        materialContainer.classList.add('bakContainer');
-    }
-
-    const button = document.createElement('button');
-    button.classList.add('materialButton');
-
-    const img = document.createElement('img');
-    let optionPath;
-    if (doek){
-        optionPath = imagePath + `doek${index}.png`; 
-    }
-    else{
-        optionPath = imagePath + `bak${index}.png`;
-    }
-    img.src = optionPath; // Gebruik index voor de basis textuur afbeelding
-    button.appendChild(img);
-    materialContainer.appendChild(button);
-
-    // Eventlistener voor textuurverandering
-    button.addEventListener('click', () => {
-        if (doek){
-            changeTexture(selectedObject, "Doek", optionPath); 
-        }
-        else{
-            changeTexture(selectedObject, "Bak", optionPath)
-        }
-    });
-
-    container.appendChild(materialContainer);
-}
-
 // Keep track of the currently open dropdown
 let currentlyOpenDropdown = null;
 
-function createMaterialDropdown(doekIndex, options, imagePath, container) {
+function createMaterialDropdown(doekIndex, options, imagePath, container, isBak = false) {
     const materialContainer = document.createElement('div');
     materialContainer.classList.add('materialContainer');
+    materialContainer.style.position = 'relative'; // Ensure dropdown is positioned relative to the container
 
     const button = document.createElement('button');
     button.classList.add('materialButton');
 
     // Maak een afbeeldings element voor de knop (gebruik makend van doekIndex)
     const img = document.createElement('img');
-    img.src = imagePath + `doek${doekIndex}.png`; // Basis textuur afbeelding
+    let toChange = null;
+    if (!isBak) {
+        img.src = imagePath + `doek${doekIndex}.png`;
+        toChange = "Doek";
+    } else {
+        img.src = imagePath + `bak${doekIndex}.png`;
+        toChange = 'Bak';
+    }
     button.appendChild(img);
     materialContainer.appendChild(button);
 
-    // Maak een dropdown container
+    // Maak een dropdown container en voeg deze toe aan de materialContainer
     const dropdown = document.createElement('div');
     dropdown.classList.add('materialDropdown');
     dropdown.style.display = 'none'; // In eerste instantie verborgen
-    materialContainer.appendChild(dropdown);
 
-    // Add options to the dropdown
+    let dropDownContainer = null;
+    if(!isBak){dropDownContainer = document.getElementById("dropDownContainer").appendChild(dropdown);} else {dropDownContainer = document.getElementById("dropDownContainer2").appendChild(dropdown);}
+
+    // Voeg opties toe aan de dropdown
     options.forEach(option => {
-        let optionPath = imagePath + `doek${option}.png`;
+        let optionPath = isBak ? `${imagePath}bak${option}.png` : `${imagePath}doek${option}.png`;
         const optionDiv = document.createElement('div');
         optionDiv.classList.add('materialBox');
 
@@ -91,44 +65,42 @@ function createMaterialDropdown(doekIndex, options, imagePath, container) {
         const previewImage = createPreviewImage(optionPath);
         optionDiv.appendChild(previewImage);
 
-        // Event listener om textuurverandering
+        // Event listener voor textuurverandering
         optionDiv.addEventListener('click', () => {
-            changeTexture(selectedObject, 'Doek', optionPath);
+            changeTexture(selectedObject, toChange, optionPath);
             dropdown.style.display = 'none'; // Verberg de dropdown na selectie
-            currentlyOpenDropdown = null; // Reset the currently open dropdown
+            currentlyOpenDropdown = null;   // Reset de huidige geopende dropdown
         });
 
+        // Voeg de opties toe aan het dropdown-element
         dropdown.appendChild(optionDiv);
     });
 
-    // Gebruik specifieke event listeners voor de knop zelf
+    // Gebruik event listener voor de knop om de dropdown in te schakelen
     button.addEventListener('click', (event) => {
-        // Stop bubbling to prevent unintended closures
-        event.stopPropagation();
+        event.stopPropagation(); // Voorkom dat het event naar de document click listener bubbelt
 
-        // Close any currently open dropdown if it's not the same as this one
+        // Sluit de huidige geopende dropdown als deze niet hetzelfde is als de huidige
         if (currentlyOpenDropdown && currentlyOpenDropdown !== dropdown) {
             currentlyOpenDropdown.style.display = 'none';
         }
 
-        // Toggle current dropdown visibility
-        const isVisible = dropdown.style.display === 'flex';
-        dropdown.style.display = isVisible ? 'none' : 'flex';
+        // Wissel de zichtbaarheid van de huidige dropdown
+        const isVisible = dropdown.style.display === 'grid';
+        dropdown.style.display = isVisible ? 'none' : 'grid';
 
-        // Set or clear the currently open dropdown
-        currentlyOpenDropdown = dropdown.style.display === 'flex' ? dropdown : null;
+        // Stel de huidige geopende dropdown in of maak deze leeg
+        currentlyOpenDropdown = dropdown.style.display === 'grid' ? dropdown : null;
     });
 
-    // Add click event listener to the document to close the dropdown when clicked outside
-    document.addEventListener('click', (event) => {
-        if (currentlyOpenDropdown && !materialContainer.contains(event.target)) {
-            currentlyOpenDropdown.style.display = 'none';
-            currentlyOpenDropdown = null;
-        }
+    // Voeg een click event listener toe aan de materialContainer zelf
+    materialContainer.addEventListener('click', (event) => {
+        event.stopPropagation(); // Voorkom sluiten bij klikken op de materialContainer
     });
 
     container.appendChild(materialContainer);
 }
+
 
 
 

@@ -424,10 +424,12 @@ function onWindowResize() {
 
 export function zoomIn(){
     camera.position.z *= 0.99; // Pas deze factor aan om de zoomsnelheid te wijzigen
+    controls.update();
 }
 
 export function zoomOut(){
     camera.position.z /= 0.99; // Pas deze factor aan om de zoomsnelheid te wijzigen
+    controls.update();
 }
 
 export function exportSceneAsImage() {
