@@ -529,6 +529,84 @@ export function exportSceneAsImage() {
     }
 }
 
+// Selecteer de knoppen
+const panningButton = document.getElementById('panningMode');
+const threeDButton = document.getElementById('3dMode');
+
+// Zet de 3D Mode knop standaard op actief (rood)
+threeDButton.classList.add('active');
+threeDButton.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';  // Maak de knop rood en semi-transparant
+
+// Voeg een event listener toe voor de Panning Mode knop
+panningButton.addEventListener('click', function() {
+    const isActive = panningButton.classList.contains('active');
+
+    if (isActive) {
+        // Als de Panning Mode knop actief is, zet hem terug naar normale staat
+        panningButton.classList.remove('active');
+        panningButton.style.backgroundColor = '';  // Herstel originele achtergrondkleur
+        enableOrbitControls(false);  // Zet panning uit
+        // Zet de 3D Mode knop weer naar actief, aangezien Panning Mode uit is
+        threeDButton.classList.add('active');
+        threeDButton.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
+    } else {
+        // Als de Panning Mode knop niet actief is, zet hem naar actieve staat
+        panningButton.classList.add('active');
+        panningButton.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';  // Maak de knop rood en transparant
+        enableOrbitControls(true);  // Zet panning aan
+        // Zet de 3D Mode knop uit
+        threeDButton.classList.remove('active');
+        threeDButton.style.backgroundColor = '';  // Herstel originele achtergrondkleur
+    }
+});
+
+// Voeg een event listener toe voor de 3D Mode knop
+threeDButton.addEventListener('click', function() {
+    const isActive = threeDButton.classList.contains('active');
+
+    if (isActive) {
+        // Als de 3D Mode knop actief is, zet hem uit
+        threeDButton.classList.remove('active');
+        threeDButton.style.backgroundColor = '';  // Herstel originele achtergrondkleur
+        // Zet de Panning Mode knop automatisch actief
+        panningButton.classList.add('active');
+        panningButton.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';  // Maak de knop rood en transparant
+        enableOrbitControls(true);  // Zet panning aan
+    } else {
+        // Als de 3D Mode knop niet actief is, zet hem naar actieve staat
+        threeDButton.classList.add('active');
+        threeDButton.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';  // Maak de knop rood en semi-transparant
+        // Zet de Panning Mode knop uit
+        panningButton.classList.remove('active');
+        panningButton.style.backgroundColor = '';  // Herstel originele achtergrondkleur
+        enableOrbitControls(false);  // Zet panning uit
+    }
+});
+
+
+
+// Deze functie schakelt panning mode in/uit zonder de Shift-toets
+function enableOrbitControls(enablePanning) {
+    if (controls) {
+        // Zet de panning in/uit afhankelijk van de status van de knop
+        controls.enablePan = enablePanning;
+        controls.screenSpacePanning = enablePanning;  // Zorg ervoor dat panning mogelijk is in schermruimte
+        
+        // Zet roteren uit als panning aan staat
+        controls.enableRotate = !enablePanning;
+
+        // Maak panning mogelijk zonder Shift-toets door de event listeners aan te passen
+        controls.mouseButtons = {
+            LEFT: (enablePanning ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE),
+            MIDDLE: THREE.MOUSE.PAN,  // Muiswiel kan ook panning triggeren
+            RIGHT: THREE.MOUSE.ROTATE
+        };
+
+        // Extra optie voor pan snelheid aanpassen
+        controls.keyPanSpeed = 7.0;  // Pas dit aan om de snelheid van panning te regelen
+    }
+}
+
 
 
 
