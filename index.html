@@ -157,10 +157,10 @@
             </div>
             <div class="objectButtonsContainer">
                 <!-- Containers for different object buttons -->
-                <div id="normalContainer"></div>
-                <div id="nobakContainer"></div>
-                <div id="straightContainer"></div>
-                <div id="straightnbContainer"></div>
+                <div id="normalContainer" class="normalContainer"></div>
+                <div id="nobakContainer" class="nobakContainer"></div>
+                <div id="straightContainer" class="straightContainer"></div>
+                <div id="straightnbContainer" class="straightnbContainer"></div>
             </div>
         </div>
            
@@ -211,19 +211,19 @@ function updateContainerVisibility() {
     switch (combinedState) {
         case '11':
             // Only 'normalContainer' visible
-            document.getElementById('normalContainer').style.display = 'block';
+            document.getElementById('normalContainer').style.display = 'grid';
             break;
         case '10':
             // Only 'straightContainer' visible
-            document.getElementById('straightContainer').style.display = 'block';
+            document.getElementById('straightContainer').style.display = 'grid';
             break;
         case '01':
             // Only 'nobakContainer' visible
-            document.getElementById('nobakContainer').style.display = 'block';
+            document.getElementById('nobakContainer').style.display = 'grid';
             break;
         case '00':
             // Only 'straightnbContainer' visible
-            document.getElementById('straightnbContainer').style.display = 'block';
+            document.getElementById('straightnbContainer').style.display = 'grid';
             break;
         default:
             // Default case if no matching state
