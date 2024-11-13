@@ -17,10 +17,10 @@ export function createMaterialButtons() {
 
     // Maak doekvariaties aan in een dropdown
     // doekIndex, array met andere doeken variaties, container van het document, type textuur
-    createMaterialDropdown(1, [1, 2, 3, 4], bakPath, bakButtonsContainer, true);
-    createMaterialDropdown(1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], doekPath, materialButtonsContainer);
-    createMaterialDropdown(11, [11, 12, 13, 14], doekPath, materialButtonsContainer);
-    createMaterialDropdown(15, [15, 16, 17, 18, 19, 20, 21, 22], doekPath, materialButtonsContainer);
+    createMaterialDropdown(5, [1, 2, 3, 4], bakPath, bakButtonsContainer, true);
+    createMaterialDropdown(23, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], doekPath, materialButtonsContainer);
+    createMaterialDropdown(25, [11, 12, 13, 14], doekPath, materialButtonsContainer);
+    createMaterialDropdown(24, [15, 16, 17, 18, 19, 20, 21, 22], doekPath, materialButtonsContainer);
 }
 
 // Keep track of the currently open dropdown
