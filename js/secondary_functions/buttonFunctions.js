@@ -1,8 +1,7 @@
-import { selectedObject, copyObject, pasteObject, changeLightDirection, directions, loadImage, exportSceneAsImage, checkForselectedObject, zoomIn, zoomOut, imagePlane } from "../app.js";
-import { scaleHorizontal, scaleObject, rotateObjectZ, rotateObjectY } from "./scaleAndRotateObject.js";
+import { selectedObject, copyObject, pasteObject, changeLightDirection, directions, loadImage, exportSceneAsImage, checkForselectedObject, zoomIn, zoomOut } from "../app.js";
+import { scaleHorizontal, scaleObject, rotateObject } from "./scaleAndRotateObject.js";
 
 let currentDirectionIndex = 0;
-let rotateZ;
 
 function showSelectObject() {
     document.getElementById('objectContainer').style.display = 'flex';
@@ -74,24 +73,14 @@ function decreaseHorizontalSize() {
 function rotateLeft(){
     checkForselectedObject();
     if (selectedObject){
-        if(rotateZ){
-            rotateObjectZ(selectedObject, false);
-        }
-        else{
-            rotateObjectY(selectedObject, false);
-        }
+        rotateObject(selectedObject, false);
     }
 }
 
 function rotateRight(){
     checkForselectedObject();
     if(selectedObject){
-        if(rotateZ){
-            rotateObjectZ(selectedObject, true);
-        }
-        else{
-            rotateObjectY(selectedObject, true);
-        }
+        rotateObject(selectedObject, true);
     }
 }
 
@@ -109,10 +98,6 @@ function startContinuousExecution(action) {
 function stopContinuousExecution() {
     clearInterval(intervalId);
     intervalId = null;
-}
-
-function changeRotation(){
-    rotateZ = !rotateZ;
 }
 
 // Event listeners for the buttons
@@ -137,7 +122,6 @@ document.getElementById('selectButton').addEventListener('click', showSelectObje
 document.getElementById('uploadImageButton').addEventListener('click', loadNewImage);
 document.getElementById('makeScreenshot').addEventListener('click', exportSceneAsImage);
 document.getElementById('changeLightDirection').addEventListener('click', changeLight);
-document.getElementById('rotateSelect').addEventListener('click', changeRotation);
 
 // Copy and paste functions from app.js
 document.getElementById('copyButton').addEventListener('click', copyObject);
