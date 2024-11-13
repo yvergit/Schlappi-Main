@@ -59,7 +59,7 @@ export function init_upload() {
             document.getElementById('materialButtonsContainer').style.display = 'flex';
             document.getElementById('bakButtonsContainer').style.display = 'flex';
             document.getElementById('topBanner').style.display = 'flex';
-            document.getElementById('buttonContainer').style.display = 'flex';
+            document.getElementById('buttonContainer').style.display = 'none';
             document.getElementById('right-bottom').style.display = 'flex';
             
 
@@ -166,12 +166,41 @@ function init(textureSrc) {
     
                 // Update the bounding box if needed
                 updateBoundingBox();
+
+                function showMenu() {
+                    document.getElementById("buttonContainer").style.display = "flex";
+                }
+                
+                function hideMenu() {
+                    document.getElementById("buttonContainer").style.display = "none";
+                }
+                
+                // Controle of een object geselecteerd is
+                if (selectedObject) {
+                    // Toon het menu als er een object is geselecteerd
+                    showMenu();
+                } else {
+                    // Verberg het menu als er geen object is geselecteerd
+                    hideMenu();
+                }
+                
             }
         } else {
             // If no object is clicked, reset selectedObject and re-enable controls
             selectedObject = null;
             controls.enabled = true;
             removeBoundingBox();
+            // Update the bounding box if needed
+            updateBoundingBox();
+
+            function hideMenu() {
+                document.getElementById("buttonContainer").style.display = "none";
+            }
+            
+                // Verberg het menu als er geen object is geselecteerd
+                hideMenu();
+
+            
         }
     }
     
@@ -238,14 +267,6 @@ export function loadSelectedObject(object_name) {
     const mtlLoader = new MTLLoader();
     const objLoader = new OBJLoader();
 
-    // Remove previous objects from the scene
-    if (switchableObjects.length > 0) {
-        switchableObjects.forEach(obj => {
-            scene.remove(obj); 
-        });
-        switchableObjects.length = 0; 
-        removeBoundingBox();
-    }
 
     // MTL Loader
     mtlLoader.load(basePath + object_name + mtlExt, (materials) => {
