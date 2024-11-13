@@ -15,6 +15,7 @@ let availableObjects  = ["model1", "model2", "model5", "model23", "model15"];
 let selectedObject = null;
 export {selectedObject};
 let objModel, imagePlane; // Correct gebruik van globale variabelen
+export {imagePlane};
 let boxHelper;
 let clipboardObject = null; // Voor het tijdelijk opslaan van het gekopieerde object
 let switchableObjects = []; // Lijst van objecten waartussen geschakeld kan worden
