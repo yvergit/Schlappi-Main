@@ -204,6 +204,22 @@ function init(textureSrc) {
         }
     }
     
+
+  // Handle delete button click
+  document.getElementById('deleteButton').addEventListener('click', function() {
+    if (selectedObject) {
+      // Remove the selected object from the scene
+      scene.remove(selectedObject);
+      selectedObject = null; // Reset selected object
+    }
+  });
+  
+  // Rendering loop
+  function animate() {
+    requestAnimationFrame(animate);
+  
+    renderer.render(scene, camera);
+  }
     
     function onMouseMove(event) {
         if (!isDragging || !selectedObject) return;
