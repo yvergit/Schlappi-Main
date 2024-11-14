@@ -203,16 +203,6 @@ function init(textureSrc) {
             
         }
     }
-    
-
-  // Handle delete button click
-  document.getElementById('deleteButton').addEventListener('click', function() {
-    if (selectedObject) {
-      // Remove the selected object from the scene
-      scene.remove(selectedObject);
-      selectedObject = null; // Reset selected object
-    }
-  });
   
   // Rendering loop
   function animate() {
@@ -343,6 +333,7 @@ export function loadSelectedObject(object_name) {
             scene.add(objModel);
             objModel.receiveShadow = true;
             objModel.position.x = 0;
+            
 
             // Store the new object in switchableObjects
             switchableObjects.push(objModel);
@@ -702,3 +693,14 @@ export function changeLightDirection(direction) {
     directionalLight.target.position.copy(targetPosition); // Richt het licht
     directionalLight.target.updateMatrixWorld();
 }
+
+// Handle delete button click
+document.getElementById('deleteButton').addEventListener('click', function() {
+    if (selectedObject) {
+      // Remove the selected object from the scene
+      scene.remove(selectedObject);
+      selectedObject = null; // Reset selected object
+      updateBoundingBox();
+      updateIntersectedObjects();
+    }
+  });
