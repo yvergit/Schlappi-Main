@@ -73,6 +73,15 @@ export function init_upload() {
 //uncomment om upload button zonder verify code te krijgen
 //init_upload();
 
+function showMenu() {
+    document.getElementById("buttonContainer").style.display = "flex";
+}
+
+function hideMenu() {
+    document.getElementById("buttonContainer").style.display = "none";
+}
+
+
 function init(textureSrc) {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
@@ -119,7 +128,7 @@ function init(textureSrc) {
     
     let dragPlane = new THREE.Plane();
     let dragOffset = new THREE.Vector3();
-    
+
     function onMouseDown(event) {
         event.preventDefault();
         
@@ -166,41 +175,14 @@ function init(textureSrc) {
     
                 // Update the bounding box if needed
                 updateBoundingBox();
-
-                function showMenu() {
-                    document.getElementById("buttonContainer").style.display = "flex";
-                }
-                
-                function hideMenu() {
-                    document.getElementById("buttonContainer").style.display = "none";
-                }
-                
-                // Controle of een object geselecteerd is
-                if (selectedObject) {
-                    // Toon het menu als er een object is geselecteerd
-                    showMenu();
-                } else {
-                    // Verberg het menu als er geen object is geselecteerd
-                    hideMenu();
-                }
-                
+                showMenu(); 
             }
         } else {
             // If no object is clicked, reset selectedObject and re-enable controls
             selectedObject = null;
             controls.enabled = true;
+            hideMenu();
             removeBoundingBox();
-            // Update the bounding box if needed
-            updateBoundingBox();
-
-            function hideMenu() {
-                document.getElementById("buttonContainer").style.display = "none";
-            }
-            
-                // Verberg het menu als er geen object is geselecteerd
-                hideMenu();
-
-            
         }
     }
   
@@ -276,8 +258,6 @@ export function loadSelectedObject(object_name) {
 
     // MTL Loader
     mtlLoader.load(basePath + object_name + mtlExt, (materials) => {
-        // OBJ model loading
-        objLoader.setMaterials(materials);
         objLoader.load(basePath + object_name + objExt, function(object) {
             object.scale.setScalar(1);
             objModel = object;
@@ -700,7 +680,7 @@ document.getElementById('deleteButton').addEventListener('click', function() {
       // Remove the selected object from the scene
       scene.remove(selectedObject);
       selectedObject = null; // Reset selected object
-      updateBoundingBox();
-      updateIntersectedObjects();
+      removeBoundingBox();
+      hideMenu();
     }
   });

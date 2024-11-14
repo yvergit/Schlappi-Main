@@ -288,8 +288,14 @@ input:checked + .slider:before {
     border-radius: 10%;
     cursor: pointer;
     display: flex;
+    position: relative; /* Added to allow positioning of hover elements */
     align-self: auto;
     background-color: white;
+    overflow: hidden; /* Ensure circle does not overflow */
+}
+
+#objectContainer button:hover{
+    border: dotted 1px black;
 }
 
 #objectContainer button img {
@@ -298,9 +304,41 @@ input:checked + .slider:before {
     background-color: white;
 }
 
-#objectContainer button:hover {
-    border: dotted;
+/* Red circle with white '+' sign on hover */
+#objectContainer button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px; /* Size of the red circle */
+    height: 40px;
+    background-color: red;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.2s ease;
+    z-index: 1;
 }
+
+/* White '+' sign in the middle of the red circle */
+#objectContainer button::before {
+    content: '+';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    transition: transform 0.2s ease;
+    z-index: 2;
+}
+
+/* Show the red circle and white '+' on hover */
+#objectContainer button:hover::after,
+#objectContainer button:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
 
 .home-image {
     flex: 1 0 50%;
