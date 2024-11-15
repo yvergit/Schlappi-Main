@@ -442,23 +442,19 @@ export function zoomOut(){
 
 export function exportSceneAsImage() {
     console.log("Screenshotfunctie gestart");
-    
-    // Renderer uitlezen naar een Data URL
-    var imgData;
+
     try {
-        var strMime = "image/jpg";
-        imgData = renderer.domElement.toDataURL(strMime);
-        
-        // Laad de screenshot in een nieuwe afbeelding om bewerking mogelijk te maken
+        const strMime = "image/jpg";
+        const imgData = renderer.domElement.toDataURL(strMime);
+
         const img = new Image();
-        img.onload = function() {
+        img.onload = function () {
             console.log("Screenshot geladen in nieuwe afbeelding");
 
             const borderSize = 80; // Verhoogd om rand 4x zo dik te maken
             const canvasWidth = renderer.domElement.width + borderSize * 2;
             const canvasHeight = renderer.domElement.height + borderSize * 2;
 
-            // Maak een nieuw canvas voor de afbeelding met rand en logo
             const offscreenCanvas = document.createElement("canvas");
             offscreenCanvas.width = canvasWidth;
             offscreenCanvas.height = canvasHeight;
@@ -471,50 +467,66 @@ export function exportSceneAsImage() {
             // Teken de screenshot in het midden van het nieuwe canvas
             ctx.drawImage(img, borderSize, borderSize);
 
-            // Laad en teken het logo op de rand (canvas) zelf
             const logo = new Image();
-            logo.src = "img/logo-schlappi.png"; // Controleer het pad
-            logo.onload = function() {
+            logo.src = "img/logo-schlappi.png";
+            logo.onload = function () {
                 console.log("Logo geladen en toegevoegd aan canvas");
 
-                const logoWidth = 200; // Pas aan indien nodig
-                const logoHeight = 50; // Pas aan indien nodig
+                const logoWidth = 200;
+                const logoHeight = 50;
 
-                // Plaatsing van logo in de zwarte rand
-                const logoX = canvasWidth - logoWidth - (borderSize / 2);
-                const logoY = canvasHeight - logoHeight - (borderSize / 4);
+                const logoX = canvasWidth - logoWidth - borderSize / 2;
+                const logoY = canvasHeight - logoHeight - borderSize / 4;
 
-                // Teken logo op de rand
                 ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
 
-                // Converteer het aangepaste canvas naar een afbeelding en download
                 const finalImageData = offscreenCanvas.toDataURL("image/jpg");
 
-                // Maak een link en klik er programmatisch op om de afbeelding te downloaden
-                const link = document.createElement('a');
-                if (typeof link.download === 'string') {
-                    document.body.appendChild(link); // Firefox vereist dat de link deel uitmaakt van het document
-                    link.download = 'scene_with_border.jpg';
+                // Part 1: Download the image locally
+                const link = document.createElement("a");
+                if (typeof link.download === "string") {
+                    document.body.appendChild(link);
+                    link.download = "scene_with_border.jpg";
                     link.href = finalImageData;
                     link.click();
-                    document.body.removeChild(link); // Verwijder de link wanneer het niet meer nodig is
+                    document.body.removeChild(link);
                     console.log("Screenshot gedownload met rand en logo");
                 } else {
                     location.replace(finalImageData);
                 }
+
+                // Part 2: Send the image to the server
+                fetch("php/send_image_email.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ image: finalImageData }),
+                })
+                    .then((response) => response.text())
+                    .then((result) => {
+                        console.log("Afbeelding succesvol naar de server verzonden:", result);
+                    })
+                    .catch((error) => {
+                        console.error("Fout bij verzenden van afbeelding naar de server:", error);
+                    });
             };
-            logo.onerror = function() {
+
+            logo.onerror = function () {
                 console.error("Fout bij laden van logo. Controleer het pad naar het logo.");
             };
         };
-        img.onerror = function() {
+
+        img.onerror = function () {
             console.error("Fout bij laden van screenshot afbeelding.");
         };
+
         img.src = imgData;
     } catch (e) {
         console.error("Er is een fout opgetreden:", e);
     }
 }
+
 
 // Selecteer de knoppen
 const panningButton = document.getElementById('panningMode');
