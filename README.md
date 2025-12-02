@@ -1,5 +1,5 @@
 ## .env Bestanden in de PHP Map
-In de `php` map moet een `.env` bestand worden toegevoegd. Hierin worden de e-mailadres, het wachtwoord en de SMTP-instellingen opgeslagen. In dit geval alleen de user en pass aanpassen. 
+In de `php` map moet een `.env` bestand worden toegevoegd. Hierin worden de e-mailadres, het wachtwoord en de SMTP-instellingen opgeslagen. In dit geval alleen de user en pass aanpassen. (goed beveiligd)
 
 ### Voorbeeld `.env` bestand
 SMTP_HOST=smtp.gmail.com
